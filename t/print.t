@@ -248,9 +248,9 @@ group:g1 = # g1 trailing
 # g1 post def
 
 description = This is a fine group; # desc
-# desc post
+ # desc post
 
-# desc post 2
+ # desc post 2
 
  # First element
  host:h1, # after first
@@ -258,8 +258,8 @@ description = This is a fine group; # desc
 
  # Second
  host:h2, # after second
- # post second
 ;
+# post second
 
 # tail1
 
@@ -375,7 +375,7 @@ END
 
 $out = <<'END';
 group:g1 =
-# post g1
+ # post g1
 
  # pre g2
  group:g2 # g2
