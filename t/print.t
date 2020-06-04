@@ -520,4 +520,36 @@ END
 test_run($title, $in, $out);
 
 ############################################################
+$title = 'Service with foreach';
+############################################################
+
+$in = <<'END';
+service:s1 = {
+ user = foreach host:h1, host:h2;
+ permit src = user; dst = network:[user]; prt = tcp 80;
+}
+END
+
+$out = <<'END';
+service:s1 = {
+ user = foreach
+  host:h1,
+  host:h2,
+ ;
+permit
+ src =
+  user,
+ ;
+ dst =
+  network:[user],
+ ;
+ prt =
+  tcp 80,
+ ;
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
 done_testing;
