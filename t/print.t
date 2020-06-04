@@ -71,26 +71,17 @@ END
 test_run($title, $in, $out);
 
 ############################################################
-$title = 'Only comments';
+$title = 'If only comments in file, they are ignored';
 ############################################################
 
 $in = <<'END';
 # c1
   #c1b
 
-
 #c2
-
-#c3
 END
 
 $out = <<'END';
-# c1
-#c1b
-
-#c2
-
-#c3
 END
 
 test_run($title, $in, $out);
@@ -228,11 +219,6 @@ host:h1, # after first
 
 # Second
 host:h2,; # after second
-# post second
-
-# tail1
-
-# tail2
 END
 
 $out = <<'END';
@@ -259,11 +245,6 @@ description = This is a fine group;  # desc
  # Second
  host:h2, # after second
 ;
-# post second
-
-# tail1
-
-# tail2
 END
 
 test_run($title, $in, $out);
@@ -305,8 +286,6 @@ $out = <<'END';
 group:g1 =
  host:h, # trailing
 ;
-# more trailing
-# and more
 END
 
 test_run($title, $in, $out);
@@ -369,7 +348,6 @@ group:g1 =
   group:g3 # g3
  &! # &!
   host:h2, # h2
- # post h2
 ;
 END
 
@@ -386,7 +364,6 @@ group:g1 =
  &! host:h2 # h2
  ,
 ;
-# post h2
 END
 
 test_run($title, $in, $out);
