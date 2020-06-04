@@ -405,4 +405,119 @@ END
 test_run($title, $in, $out);
 
 ############################################################
+$title = 'Service with comments';
+############################################################
+
+$in = <<'END';
+# pre s1
+service:s1 = {
+ # head s1
+ description = s1 # desc s1
+ # IGNORED
+ user = host:h1, host:h2;
+ # pre rule1
+ permit src = user; dst = network:n1; prt = tcp 80; # after prt
+ # pre rule2
+ permit src = network:n1;
+  # IGNORED
+        dst = user;
+  # IGNORED
+        prt =
+           # pre tcp
+           tcp 90, # after tcp
+           # post tcp
+           # pre udp
+           udp 123, proto 47, icmp 8; #after icmp
+   # Pre log
+        log = asa1, # IGNORED
+              fw3; # after log2
+}
+END
+
+$out = <<'END';
+# pre s1
+service:s1 = {
+# head s1
+description = s1  # desc s1
+ user =
+  host:h1,
+  host:h2,
+ ;
+# pre rule1
+permit
+ src =
+  user,
+ ;
+ dst =
+  network:n1,
+ ;
+ prt =
+  tcp 80, # after prt
+ ;
+# pre rule2
+permit
+ src =
+  network:n1,
+ ;
+ dst =
+  user,
+ ;
+ prt =
+  # pre tcp
+  tcp 90, # after tcp
+  # post tcp
+  # pre udp
+  udp 123,
+  proto 47,
+  icmp 8, #after icmp
+ ;
+ # Pre log
+ log = asa1, fw3; # after log2
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
+$title = 'Service with attributes';
+############################################################
+
+$in = <<'END';
+service:s1 = {
+ overlaps = service:s2, service:s3, service:s4, service:s5, service:s6;
+ multi_owner;
+ user = host:h1;
+ permit src = user; dst = network:n1; prt = tcp 80;
+}
+END
+
+$out = <<'END';
+service:s1 = {
+ overlaps =
+  service:s2,
+  service:s3,
+  service:s4,
+  service:s5,
+  service:s6,
+ ;
+ multi_owner;
+ user =
+  host:h1,
+ ;
+permit
+ src =
+  user,
+ ;
+ dst =
+  network:n1,
+ ;
+ prt =
+  tcp 80,
+ ;
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
 done_testing;
