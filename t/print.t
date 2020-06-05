@@ -581,4 +581,37 @@ END
 test_run($title, $in, $out);
 
 ############################################################
+$title = 'Deeply nested automatic group';
+############################################################
+
+$in = <<'END';
+service:s1 = {
+ user = host:[network:[area:a] &! network:[network:[area:b] &! network:n1]];
+ permit src = user;
+        dst = network:n2;
+        prt = tcp 80;
+}
+END
+
+$out = <<'END';
+service:s1 = {
+
+ user = host:[
+         network:[area:a]
+         &! network:[
+             network:[area:b]
+             &! network:n1
+             ,
+            ]
+         ,
+        ];
+ permit src = user;
+        dst = network:n2;
+        prt = tcp 80;
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
 done_testing;
