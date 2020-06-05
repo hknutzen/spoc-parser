@@ -560,11 +560,8 @@ $title = 'Automatic group in first line';
 
 $in = <<'END';
 service:s1 = {
- user = host:[network:n1, network:n2], host:h3;
-
- permit src = user;
-        dst = host:h2;
-        prt = tcp 80;
+ user = host:[network:n1, network:n2]; # host:h3;
+ permit src = user; dst = host:h2; prt = tcp 80;
 }
 END
 
@@ -574,7 +571,7 @@ service:s1 = {
  user = host:[
          network:n1,
          network:n2,
-        ];
+        ]; # host:h3;
  permit src = user;
         dst = host:h2;
         prt = tcp 80;
