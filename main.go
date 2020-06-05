@@ -1,7 +1,6 @@
 package main
 
 import (
-	//	"encoding/json"
 	"fmt"
 	"github.com/hknutzen/spoc-parser/parser"
 	"github.com/hknutzen/spoc-parser/printer"
@@ -22,10 +21,4 @@ func main() {
 	}
 	list := parser.ParseFile(bytes, path)
 	printer.File(list, bytes)
-	/*	json, err := json.MarshalIndent(list, "", " ")
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(string(json))
-	*/
 }
