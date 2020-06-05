@@ -229,11 +229,12 @@ $out = <<'END';
 
 # This is g1
 group:g1 = # g1 trailing
-# g1 trailing2
+ # g1 trailing2
 
-# g1 post def
+ # g1 post def
 
-description = This is a fine group;  # desc
+ description = This is a fine group;  # desc
+
  # desc post
 
  # desc post 2
@@ -423,13 +424,13 @@ service:s1 = {
         dst = user;
   # IGNORED
         prt =
-           # pre tcp
+  # IGNORED
            tcp 90, # after tcp
            # post tcp
            # pre udp
            udp 123, proto 47, icmp 8; #after icmp
    # Pre log
-        log = asa1, # IGNORED
+        log = asa1, # after log1
               fw3; # after log2
 }
 END
@@ -437,42 +438,30 @@ END
 $out = <<'END';
 # pre s1
 service:s1 = {
-# head s1
-description = s1  # desc s1
- user =
-  host:h1,
-  host:h2,
- ;
-# pre rule1
-permit
- src =
-  user,
- ;
- dst =
-  network:n1,
- ;
- prt =
-  tcp 80, # after prt
- ;
-# pre rule2
-permit
- src =
-  network:n1,
- ;
- dst =
-  user,
- ;
- prt =
-  # pre tcp
-  tcp 90, # after tcp
-  # post tcp
-  # pre udp
-  udp 123,
-  proto 47,
-  icmp 8, #after icmp
- ;
- # Pre log
- log = asa1, fw3; # after log2
+ # head s1
+ description = s1  # desc s1
+
+ user = host:h1,
+        host:h2,
+        ;
+ # pre rule1
+ permit src = user;
+        dst = network:n1;
+        prt = tcp 80; # after prt
+ # pre rule2
+ permit src = network:n1;
+        dst = user;
+        prt = tcp 90, # after tcp
+              # post tcp
+              # pre udp
+              udp 123,
+              proto 47,
+              icmp 8, #after icmp
+              ;
+        # Pre log
+        log = asa1, # after log1
+              fw3, # after log2
+              ;
 }
 END
 
@@ -493,27 +482,19 @@ END
 
 $out = <<'END';
 service:s1 = {
- overlaps =
-  service:s2,
-  service:s3,
-  service:s4,
-  service:s5,
-  service:s6,
- ;
+
+ overlaps = service:s2,
+            service:s3,
+            service:s4,
+            service:s5,
+            service:s6,
+            ;
  multi_owner;
- user =
-  host:h1,
- ;
-permit
- src =
-  user,
- ;
- dst =
-  network:n1,
- ;
- prt =
-  tcp 80,
- ;
+
+ user = host:h1;
+ permit src = user;
+        dst = network:n1;
+        prt = tcp 80;
 }
 END
 
@@ -532,20 +513,71 @@ END
 
 $out = <<'END';
 service:s1 = {
+
  user = foreach
   host:h1,
   host:h2,
  ;
-permit
- src =
-  user,
- ;
- dst =
-  network:[user],
- ;
- prt =
-  tcp 80,
- ;
+ permit src = user;
+        dst = network:[user];
+        prt = tcp 80;
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
+$title = 'Intersection in first line';
+############################################################
+
+$in = <<'END';
+service:s1 = {
+ user = group:g1 &! host:h1;
+
+ permit src = user;
+        dst = host:h2;
+        prt = tcp 80;
+}
+END
+
+$out = <<'END';
+service:s1 = {
+
+ user = group:g1
+        &! host:h1
+        ;
+ permit src = user;
+        dst = host:h2;
+        prt = tcp 80;
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
+$title = 'Automatic group in first line';
+############################################################
+
+$in = <<'END';
+service:s1 = {
+ user = host:[network:n1, network:n2], host:h3;
+
+ permit src = user;
+        dst = host:h2;
+        prt = tcp 80;
+}
+END
+
+$out = <<'END';
+service:s1 = {
+
+ user = host:[
+         network:n1,
+         network:n2,
+        ];
+ permit src = user;
+        dst = host:h2;
+        prt = tcp 80;
 }
 END
 
