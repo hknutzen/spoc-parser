@@ -443,7 +443,7 @@ service:s1 = {
   # IGNORED
         dst = user;
   # IGNORED
-        prt = # IGNORED
+        prt = # pre tcp after '='
            # pre tcp
            tcp 90, # after tcp
            # post tcp
@@ -472,6 +472,7 @@ service:s1 = {
  permit src = network:n1;
         dst = user;
         prt =
+              # pre tcp after '='
               # pre tcp
               tcp 90, # after tcp
               # post tcp
