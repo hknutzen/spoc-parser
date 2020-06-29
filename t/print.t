@@ -251,6 +251,26 @@ END
 test_run($title, $in, $out);
 
 ############################################################
+$title = 'Ignore comment inside description';
+############################################################
+
+$in = <<'END';
+group:g1 =
+   description # IGNORE
+   =  the text; # comment
+;
+END
+
+$out = <<'END';
+group:g1 =
+ description =  the text;  # comment
+
+;
+END
+
+test_run($title, $in, $out);
+
+############################################################
 $title = 'Comment before first element';
 ############################################################
 
