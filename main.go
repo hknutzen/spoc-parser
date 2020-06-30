@@ -20,5 +20,8 @@ func main() {
 		os.Exit(1)
 	}
 	list := parser.ParseFile(bytes, path)
+	for _, n := range list {
+		n.Normalize()
+	}
 	printer.File(list, bytes)
 }

@@ -114,13 +114,13 @@ END
 
 $out = <<'END';
 group:g1 =
- host:h1,
  group:g2
  & group:g3
  &! host:h2
  &! host:h3
  ,
  network:n1,
+ host:h1,
 ;
 END
 
@@ -146,11 +146,11 @@ END
 
 $out = <<'END';
 group:g1 =
- interface:r1.[auto],
- interface:[network:n1].[all],
- interface:r1.[auto],
  any:[area:a1],
  network:[area:a2],
+ interface:[network:n1].[all],
+ interface:r1.[auto],
+ interface:r1.[auto],
 ;
 END
 
@@ -162,19 +162,15 @@ $title = 'Nested automatic groups';
 
 $in = <<'END';
 group:g1 =
- interface:[network:n1, network:n2].[all],
+ interface:[network:n2, network:n1].[all],
  network:[any:[area:a1]],
  network:[
-  interface:[area:a2, area:a3].[all] &! interface:r1.n3, interface:r1.n3.virtual
+  interface:[area:a3, area:a2].[all] &! interface:r1.n3, interface:r1.n3.virtual
  ]  ;
 END
 
 $out = <<'END';
 group:g1 =
- interface:[
-  network:n1,
-  network:n2,
- ].[all],
  network:[
   any:[area:a1],
  ],
@@ -187,6 +183,10 @@ group:g1 =
   ,
   interface:r1.n3.virtual,
  ],
+ interface:[
+  network:n1,
+  network:n2,
+ ].[all],
 ;
 END
 
@@ -435,11 +435,11 @@ service:s1 = {
  # head s1
  description = s1 # desc s1
  # IGNORED
- user = host:h1, host:h2;
+ user = host:h2, host:h1;
  # pre rule1
  permit src = user; dst = network:n1; prt = tcp 80; # after prt
  # pre rule2
- permit src = network:n1;
+ permit src = network:n2, network:n1;
   # IGNORED
         dst = user;
   # IGNORED
@@ -450,8 +450,8 @@ service:s1 = {
            # pre udp
            udp 123, proto 47, icmp 8; #after icmp
    # Pre log
-        log = asa1, # after log1
-              fw3; # after log2
+        log = fw3, # after log1
+              asa1; # after log2
 }
 END
 
@@ -469,7 +469,9 @@ service:s1 = {
         dst = network:n1;
         prt = tcp 80; # after prt
  # pre rule2
- permit src = network:n1;
+ permit src = network:n1,
+              network:n2,
+              ;
         dst = user;
         prt =
               # pre tcp after '='
@@ -482,8 +484,8 @@ service:s1 = {
               icmp 8, #after icmp
               ;
         # Pre log
-        log = asa1, # after log1
-              fw3, # after log2
+        log = asa1, # after log2
+              fw3, # after log1
               ;
 }
 END
@@ -496,7 +498,7 @@ $title = 'Service with attributes';
 
 $in = <<'END';
 service:s1 = {
- overlaps = service:s2, service:s3, service:s4, service:s5, service:s6;
+ overlaps = service:s3, service:s6, service:s4, service:s2, service:s5;
  multi_owner;
  user = host:h1;
  permit src = user; dst = network:n1; prt = tcp 80;
@@ -506,13 +508,13 @@ END
 $out = <<'END';
 service:s1 = {
 
+ multi_owner;
  overlaps = service:s2,
             service:s3,
             service:s4,
             service:s5,
             service:s6,
             ;
- multi_owner;
 
  user = host:h1;
  permit src = user;
@@ -529,7 +531,7 @@ $title = 'Service with foreach';
 
 $in = <<'END';
 service:s1 = {
- user = foreach host:h1, host:h2;
+ user = foreach host:h2, host:h1;
  permit src = user; dst = network:[user]; prt = tcp 80;
 }
 END
@@ -583,7 +585,7 @@ $title = 'Automatic group in first line';
 
 $in = <<'END';
 service:s1 = {
- user = host:[network:n1, network:n2]; # host:h3;
+ user = host:[network:n2, network:n1]; # host:h3;
  permit src = user; dst = host:h2; prt = tcp 80;
 }
 END
