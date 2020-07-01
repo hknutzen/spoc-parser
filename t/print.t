@@ -504,12 +504,12 @@ service:s1 = {
   # IGNORED
         dst = user;
   # IGNORED
-        prt = # pre tcp after '='
-           # pre tcp
-           tcp 90, # after tcp
-           # post tcp
+        prt = # pre udp after '='
            # pre udp
-           udp 123, proto 47, icmp 8; #after icmp
+           udp 123, proto 47, icmp 8, #after icmp
+           # post udp
+           # pre tcp
+           tcp 90; # after tcp
    # Pre log
         log = fw3, # after log1
               asa1; # after log2
@@ -534,15 +534,14 @@ service:s1 = {
               network:n2,
               ;
         dst = user;
-        prt =
-              # pre tcp after '='
+        prt = icmp 8, #after icmp
+              proto 47,
+              # post udp
               # pre tcp
               tcp 90, # after tcp
-              # post tcp
+              # pre udp after '='
               # pre udp
               udp 123,
-              proto 47,
-              icmp 8, #after icmp
               ;
         # Pre log
         log = asa1, # after log2
@@ -694,6 +693,54 @@ service:s1 = {
  permit src = user;
         dst = network:n2;
         prt = tcp 80;
+}
+END
+
+test_run($title, $in, $out);
+
+############################################################
+$title = 'Order of protocols';
+############################################################
+
+$in = <<'END';
+service:s1 = {
+ user = network:n1;
+ permit src = user;
+        dst = network:n2;
+        prt = tcp 80, tcp 700, udp 70, tcp 55-59, tcp 20:1024-65535,
+              udp 123,
+              icmp 3 3,
+              icmp 4 3,
+              icmp 3 4,
+              proto 43,
+              proto 54,
+              protocol:smtp, protocol:ftp,
+              protocolgroup:ftp-active,
+        ;
+}
+END
+
+$out = <<'END';
+service:s1 = {
+
+ user = network:n1;
+ permit src = user;
+        dst = network:n2;
+        prt = protocolgroup:ftp-active,
+              protocol:ftp,
+              protocol:smtp,
+              icmp 3 3,
+              icmp 3 4,
+              icmp 4 3,
+              proto 43,
+              proto 54,
+              tcp 20 : 1024 - 65535,
+              tcp 55 - 59,
+              tcp 80,
+              tcp 700,
+              udp 70,
+              udp 123,
+              ;
 }
 END
 
