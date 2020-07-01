@@ -708,6 +708,8 @@ service:s1 = {
  permit src = user;
         dst = network:n2;
         prt = tcp 80, tcp 700, udp 70, tcp 55-59, tcp 20:1024-65535,
+              tcp 54 : 64-74,
+              tcp 20 : 64-74,
               udp 123,
               icmp 3 3,
               icmp 4 3,
@@ -734,10 +736,12 @@ service:s1 = {
               icmp 4 3,
               proto 43,
               proto 54,
-              tcp 20 : 1024 - 65535,
               tcp 55 - 59,
+              tcp 20 : 64 - 74,
+              tcp 54 : 64 - 74,
               tcp 80,
               tcp 700,
+              tcp 20 : 1024 - 65535,
               udp 70,
               udp 123,
               ;
