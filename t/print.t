@@ -28,6 +28,7 @@ sub test_run {
     if ($status != 0) {
         diag("Unexpected failure:\n$stderr");
         fail($title);
+        return
     }
     eq_or_diff("$stderr$output", $expected, $title);
 }
@@ -38,6 +39,7 @@ sub test_err {
     if ($status == 0) {
         diag("Unexpected success\n");
         fail($title);
+        return
     }
     $stderr =~ s/Aborted\n$//;
     eq_or_diff($stderr, $expected, $title);
