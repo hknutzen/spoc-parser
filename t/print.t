@@ -195,6 +195,106 @@ END
 test_run($title, $in, $out);
 
 ############################################################
+$title = 'Missing [any|all]';
+############################################################
+
+$in = <<'END';
+group:g1 = interface:r1.[ ;
+END
+
+$out = <<'END';
+Syntax error: Expected [auto|all] at line 1 of INPUT, near "interface:r1.[ ;<--HERE-->"
+END
+
+test_err($title, $in, $out);
+
+############################################################
+$title = 'Invalid group name';
+############################################################
+
+$in = <<'END';
+group:g1@2 = ;
+END
+
+$out = <<'END';
+Syntax error: Invalid token at line 1 of INPUT, near "group:g1@2<--HERE--> = ;"
+END
+
+test_err($title, $in, $out);
+
+############################################################
+$title = 'Empty interface name';
+############################################################
+
+$in = <<'END';
+group:g1 = interface:;
+END
+
+$out = <<'END';
+Syntax error: Interface name expected at line 1 of INPUT, near "interface:<--HERE-->;"
+END
+
+test_err($title, $in, $out);
+
+############################################################
+$title = 'Missing network in interface name';
+############################################################
+
+$in = <<'END';
+group:g1 = interface:r1.;
+END
+
+$out = <<'END';
+Syntax error: Interface name expected at line 1 of INPUT, near "interface:r1.;<--HERE-->"
+END
+
+test_err($title, $in, $out);
+
+############################################################
+$title = 'Invalid network in interface name';
+############################################################
+
+$in = <<'END';
+group:g1 = interface:r1.n1@vrf2;
+END
+
+$out = <<'END';
+Syntax error: Interface name expected at line 1 of INPUT, near "interface:r1.n1@vrf2;<--HERE-->"
+END
+
+test_err($title, $in, $out);
+
+############################################################
+$title = 'Multiple extensions in interface name';
+############################################################
+
+$in = <<'END';
+group:g1 = interface:r1.n1.1.2;
+END
+
+$out = <<'END';
+Syntax error: Interface name expected at line 1 of INPUT, near "interface:r1.n1.1.2;<--HERE-->"
+END
+
+test_err($title, $in, $out);
+
+############################################################
+$title = 'With umlauts';
+############################################################
+
+$in = <<'END';
+group:groß = interface:röter.über;
+END
+
+$out = <<'END';
+group:groß =
+ interface:röter.über,
+;
+END
+
+test_run($title, $in, $out);
+
+############################################################
 $title = 'Simple group with many comments';
 ############################################################
 
