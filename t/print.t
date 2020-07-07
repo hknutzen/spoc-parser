@@ -605,7 +605,7 @@ service:s1 = {
  permit src = network:n2, network:n1;
   # IGNORED
         dst = user;
-  # IGNORED
+  # Pre prt
         prt = # pre udp after '='
            # pre udp
            udp 123, proto 47, icmp 8, #after icmp
@@ -636,6 +636,7 @@ service:s1 = {
               network:n2,
               ;
         dst = user;
+        # Pre prt
         prt = icmp 8, #after icmp
               proto 47,
               # post udp
