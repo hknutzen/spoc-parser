@@ -597,13 +597,13 @@ $in = <<'END';
 service:s1 = {
  # head s1
  description = s1 # desc s1
- # IGNORED
+ # Pre user
  user = host:h2, host:h1;
  # pre rule1
  permit src = user; dst = network:n1; prt = tcp 80; # after prt
  # pre rule2
  permit src = network:n2, network:n1;
-  # IGNORED
+  # Pre dst
         dst = user;
   # Pre prt
         prt = # pre udp after '='
@@ -624,6 +624,7 @@ service:s1 = {
  # head s1
  description = s1  # desc s1
 
+ # Pre user
  user = host:h1,
         host:h2,
         ;
@@ -635,6 +636,7 @@ service:s1 = {
  permit src = network:n1,
               network:n2,
               ;
+        # Pre dst
         dst = user;
         # Pre prt
         prt = icmp 8, #after icmp
