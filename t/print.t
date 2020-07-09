@@ -338,7 +338,7 @@ group:g1 = # g1 trailing
 
  # g1 post def
 
- description = This is a fine group;  # desc
+ description = This is a fine group; # desc
 
  # desc post
 
@@ -368,7 +368,7 @@ END
 
 $out = <<'END';
 group:g1 =
- description =  the text;  # comment
+ description =  the text; # comment
 
 ;
 END
@@ -625,7 +625,7 @@ $out = <<'END';
 # pre s1
 service:s1 = {
  # head s1
- description = s1  # desc s1
+ description = s1 # desc s1
 
  # Pre user
  user = host:h1,
