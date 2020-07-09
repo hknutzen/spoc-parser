@@ -538,9 +538,10 @@ $in = <<'END';
 group:g1 =
  any:[area:a4],
  interface:r2.n-10_1_9_0-24,
- interface:r1.n-10_1_9_0-24,
+ interface:r1.n99_10_1_9_0-24,
  interface:r2.n-10_1_6_0-24,
  host:h2,
+ host:h4-999_99_9_0_0,
  host:h1-10_1_1_7,
  host:h3-999_999_0_0,
  host:range-10_1_1_6-10_1_1_8,
@@ -549,7 +550,7 @@ group:g1 =
  network:10_1_7_0-net,
  network:n-10_1_6_0-24,
  # Before
- network:n-999_10_1_10_0-24, # not recognized as IP-adress
+ network:n_10_1_10_0_999, # not recognized as IP-adress
  network:n-77,
  group:g9, group:g8,
  any:a-10_0_0_0-8,
@@ -568,7 +569,7 @@ group:g1 =
  any:a-10_0_0_0-8,
  network:n-77,
  # Before
- network:n-999_10_1_10_0-24, # not recognized as IP-adress
+ network:n_10_1_10_0_999, # not recognized as IP-adress
  network:[area:a2]
  &! network:n-10_1_9_0-24
  ,
@@ -580,12 +581,13 @@ group:g1 =
  network:10_1_8_128-10_1_8_255,
  network:n-10_1_9_0-24,
  interface:r2.n-10_1_6_0-24,
- interface:r1.n-10_1_9_0-24,
+ interface:r1.n99_10_1_9_0-24,
  interface:r2.n-10_1_9_0-24,
  host:h2,
  host:h3-999_999_0_0,
  host:range-10_1_1_6-10_1_1_8,
  host:h1-10_1_1_7,
+ host:h4-999_99_9_0_0,
 ;
 END
 
