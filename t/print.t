@@ -13,13 +13,16 @@ sub run {
     print $in_fh $input;
     close $in_fh;
     my $cmd = "./spoc-parser $filename";
-    my $stdout;
     my $stderr;
-    run3($cmd, \undef, \$stdout, \$stderr);
+    run3($cmd, \undef, \undef, \$stderr);
     my $status = $? >> 8;
     $stderr ||= '';
     $stderr =~ s/\Q$filename\E/INPUT/g;
-    return($status, $stdout, $stderr);
+    open(my $fh, '<', $filename) or die("Can't open $filename: $!\n");
+    local $/ = undef;
+    my $output = <$fh>;
+    close($fh);
+    return($status, $output, $stderr);
 }
 
 sub test_run {
